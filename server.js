@@ -1,22 +1,30 @@
 const express = require('express');
-const fs = require('fs');
-const movie_db = require('.***');
+//const fs = require('fs');
+const movie_db = require('mysql2');
+const db = movie_db.createConnection(
+    {
+        host: "127.0.0.1", 
+        user: "root",
+        password: "1350Southh90!",
+        database: "movies_db"
+    }
+)
 
 const PORT = 3001;
 const app = express()
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true}));
 
-app.use(express.static('public'));
+//app.use(express.urlencoded({ extended: true}));
+//app.use(express.static('public'));
 
 app.get('/api/movies', (req, res) => {
      console.info(`${req.method} request received to get movies`);  
-    fs.readFile('./db/movies.json', 'utf8', (err, data) => {
+    db.query('SELECT movie_name FROM movies', (err, data) => {
       if (err) {
         console.error(err);
       } else {
-        const parsedMovies = JSON.parse(data);  
+        const parsedMovies = (data);  
         res.status(200).json(parsedMovies);
       }
     });
@@ -24,11 +32,11 @@ app.get('/api/movies', (req, res) => {
   
   app.get('/api/movies-reviews', (req, res) => {
     console.info(`${req.method} request received to get movies`);  
-   fs.readFile('./db/movies.json', 'utf8', (err, data) => {
+   db.query('SELECT movie_name, reviews.review FROM reviews INNER JOIN movies ON movies.id = reviews.movie_id', 'utf8', (err, data) => {
      if (err) {
        console.error(err);
      } else {
-       const parsedReviews = JSON.parse(data);  
+       const parsedReviews = (data);  
        res.status(200).json(parsedReviews);
      }
    });
@@ -36,45 +44,20 @@ app.get('/api/movies', (req, res) => {
 
  app.post('/api/add-movies', (req, res) => {
     console.info(`${req.method} request received to add a movie`);
-    const { movies, reviews } = req.body;
-  
-    if (movies && reviews) {
-      const newEntry = {
-        movies,
-        reviews,
-        movie_id,
-        review_id,
-      };
-  
-      fs.readFile('movies.json', 'utf8', (err, data) => {
+    const { movies } = req.body; 
+    console.log(movies) 
+    if (movies) {  
+      db.query('INSERT INTO movies(movie_name) VALUES(?)', movies, (err, data) => {
         if (err) {
           console.error(err);
         } else {
-          const parsedMovies = JSON.parse(data);
-          parsedMovies.push(newEntry);
-  
-          db.push(newEntry)
-          fs.writeFile( '.movies.json',
-            JSON.stringify(parsedNotes, null, 4),
-            (writeErr) =>
-              writeErr
-                ? console.error(writeErr)
-                : console.info('Successfully added movie')
-          );
+        res.status(201).json('Successfully added movie')
         }
-      });
+      })}});
   
-      const response = {
-        status: 'success',
-        body: newNote,
-      };
-  
-      console.log(response);
-      res.status(201).json(response);
-    } else {
-      res.status(500).json('Error in posting review');
-    }
-  });
+ app.put('api/review/:id', (req,res) => {
+    console.info(`${req.method} request received to add a movie`);
+ })
  
   app.delete('/api/movie/:id', (req, res) => {
     const newDb = db.filter((movie) =>
