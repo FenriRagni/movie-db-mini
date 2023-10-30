@@ -76,6 +76,14 @@ app.get('/api/movies', (req, res) => {
     }
   });
  
+  app.delete('/api/movie/:id', (req, res) => {
+    const newDb = db.filter((movie) =>
+        movie.id !== req.params.id)
+
+    fs.writeFileSync('./movie.json', JSON.stringify(newDb))
+
+    readFile.json(newDb)
+})
 
 
 
