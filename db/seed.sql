@@ -1,6 +1,6 @@
 USE movies_db;
 
-INSERT INTO movies (name)
+INSERT INTO movies (movie_name)
 VALUES 
 ("The Fast and the Furious"), 
 ("The Matrix"), 

@@ -13,5 +13,5 @@ CREATE TABLE reviews (
     movie_id INT NOT NULL,
     review TEXT,
     FOREIGN KEY (movie_id)
-    REFERENCES movies.id
+    REFERENCES movies(id)
 );
